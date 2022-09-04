@@ -9,6 +9,7 @@
 # You don't need to understand this helper code,
 # but you will have to know how to use the functions
 # (so be sure to read the docstrings!)
+from operator import concat
 from pickle import FALSE, TRUE
 import random
 import string
@@ -73,10 +74,12 @@ def is_word_guessed(secret_word, letters_guessed):
 
     return all_guessed 
 
-# secret_word = choose_word(wordlist)
+secret_word = choose_word(wordlist)
 # letters_guessed = [*secret_word]
+letters_guessed = ['e', 'i', 'k', 'p', 'r', 's']
 
-# print(secret_word)
+
+print(secret_word)
 # print(letters_guessed)
 # print(is_word_guessed(secret_word, letters_guessed)) 
 
@@ -88,8 +91,16 @@ def get_guessed_word(secret_word, letters_guessed):
       which letters in secret_word have been guessed so far.
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
 
+    good_guesses = []
+
+    for letter in secret_word:
+      if letter in letters_guessed: good_guesses.append(letter)
+      else: good_guesses.append('_ ')
+
+    return ''.join(good_guesses)
+
+print(get_guessed_word(secret_word,letters_guessed))
 
 
 def get_available_letters(letters_guessed):
