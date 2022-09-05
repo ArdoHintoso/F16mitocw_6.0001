@@ -75,6 +75,8 @@ def is_word_guessed(secret_word, letters_guessed):
     return all_guessed 
 
 secret_word = choose_word(wordlist)
+
+
 # letters_guessed = [*secret_word]
 letters_guessed = ['e', 'i', 'k', 'p', 'r', 's']
 
@@ -109,10 +111,25 @@ def get_available_letters(letters_guessed):
     returns: string (of letters), comprised of letters that represents which letters have not
       yet been guessed.
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
     
+    good_guesses = []
+
+    for letter in secret_word:
+      if letter in letters_guessed: good_guesses.append(letter)    
+      
+    alpha_lib = list(string.ascii_lowercase)
+    available_letters = list(alpha_lib)
+
+    print(alpha_lib)
+
+    for letters in alpha_lib:
+      if letters in good_guesses: available_letters.remove(letters)
+
+    print(good_guesses)
     
+    return ''.join(available_letters)
+
+print(get_available_letters(letters_guessed))
 
 def hangman(secret_word):
     '''
