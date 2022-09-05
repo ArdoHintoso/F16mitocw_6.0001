@@ -9,11 +9,13 @@
 # You don't need to understand this helper code,
 # but you will have to know how to use the functions
 # (so be sure to read the docstrings!)
+from itertools import count
 from operator import concat
 from pickle import FALSE, TRUE
 import random
 import string
 from xmlrpc.client import boolean
+import sys 
 
 WORDLIST_FILENAME = "words.txt"
 
@@ -43,7 +45,7 @@ def choose_word(wordlist):
     
     Returns a word from wordlist at random
     """
-    return random.choice(wordlist)
+    return random.choice(wordlist) 
 
 # end of helper code
 
@@ -74,17 +76,6 @@ def is_word_guessed(secret_word, letters_guessed):
 
     return all_guessed 
 
-secret_word = choose_word(wordlist)
-
-
-# letters_guessed = [*secret_word]
-letters_guessed = ['e', 'i', 'k', 'p', 'r', 's']
-
-
-print(secret_word)
-# print(letters_guessed)
-# print(is_word_guessed(secret_word, letters_guessed)) 
-
 def get_guessed_word(secret_word, letters_guessed):
     '''
     secret_word: string, the word the user is guessing
@@ -92,8 +83,6 @@ def get_guessed_word(secret_word, letters_guessed):
     returns: string, comprised of letters, underscores (_), and spaces that represents
       which letters in secret_word have been guessed so far.
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-
     good_guesses = []
 
     for letter in secret_word:
@@ -101,8 +90,6 @@ def get_guessed_word(secret_word, letters_guessed):
       else: good_guesses.append('_ ')
 
     return ''.join(good_guesses)
-
-print(get_guessed_word(secret_word,letters_guessed))
 
 
 def get_available_letters(letters_guessed):
@@ -120,16 +107,10 @@ def get_available_letters(letters_guessed):
     alpha_lib = list(string.ascii_lowercase)
     available_letters = list(alpha_lib)
 
-    print(alpha_lib)
-
     for letters in alpha_lib:
       if letters in good_guesses: available_letters.remove(letters)
-
-    print(good_guesses)
     
     return ''.join(available_letters)
-
-print(get_available_letters(letters_guessed))
 
 def hangman(secret_word):
     '''
@@ -156,9 +137,42 @@ def hangman(secret_word):
     
     Follows the other limitations detailed in the problem write-up.
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    
+    print(f"Welcome to Hangman! The secret word has {len(secret_word)} letters. You have 6 guesses.")
 
+    count_remaining = 6
+    letters_guessed = []
+    alpha_lib = list(string.ascii_lowercase)
+
+    while count_remaining != 0 and is_word_guessed(secret_word,letters_guessed) == False: 
+      availble_letters = get_available_letters(letters_guessed) 
+
+      print(f"\nRound Prep: You have {count_remaining} guesses left.\nHere are the letters that you haven't guessed yet:\n{availble_letters}") 
+      
+      guess = input("You have one guess per round. Go for it! Insert a lower case letter: ")
+
+      if guess in alpha_lib: 
+        letters_guessed.append(guess)
+      else: 
+        guess = input("Invalid. You may only input a lower chase letter in the English alphabet.\nWarning: the program will exit automatically if an invalid input is received again. Please retry: ")
+        if guess in alpha_lib:
+          letters_guessed.append(guess)
+        else: sys.exit()
+
+      
+      if guess in secret_word: 
+        print(f"Nice! The letter {guess} is indeed part of the secret word.")
+      else: 
+        print("Oops, better luck next time!")
+        count_remaining -= 1
+
+      print(get_guessed_word(secret_word,letters_guessed))
+
+      if is_word_guessed(secret_word,letters_guessed) == True: print(f"Congrats! You have guessed the secret word: {secret_word}.")
+
+      if count_remaining == 0: print(f"You have exhausted all your chances. See you next time! The word we were looking for: {secret_word}")
+
+    return 
 
 
 # When you've completed your hangman function, scroll down to the bottom
