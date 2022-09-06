@@ -9,13 +9,13 @@
 # You don't need to understand this helper code,
 # but you will have to know how to use the functions
 # (so be sure to read the docstrings!)
-from itertools import count
-from operator import concat
+
 from pickle import FALSE, TRUE
 import random
 import string
 from xmlrpc.client import boolean
 import sys 
+import numpy as np
 
 WORDLIST_FILENAME = "words.txt"
 
@@ -144,7 +144,7 @@ def hangman(secret_word):
     letters_guessed = []
     alpha_lib = list(string.ascii_lowercase)
 
-    while count_remaining != 0 and is_word_guessed(secret_word,letters_guessed) == False: 
+    while count_remaining != 0 and not is_word_guessed(secret_word,letters_guessed):
       availble_letters = get_available_letters(letters_guessed) 
 
       print(f"\nRound Prep: You have {count_remaining} guesses left.\nHere are the letters that you haven't guessed yet:\n{availble_letters}") 
@@ -166,9 +166,11 @@ def hangman(secret_word):
         print("Oops, better luck next time!")
         count_remaining -= 1
 
-      print(get_guessed_word(secret_word,letters_guessed))
+      current_word = get_guessed_word(secret_word,letters_guessed)
+      print(current_word)
 
-      if is_word_guessed(secret_word,letters_guessed) == True: print(f"Congrats! You have guessed the secret word: {secret_word}.")
+      if is_word_guessed(secret_word,letters_guessed):
+        print(f"Congrats! You have guessed the secret word: {secret_word}.")
 
       if count_remaining == 0: print(f"You have exhausted all your chances. See you next time! The word we were looking for: {secret_word}")
 
@@ -194,10 +196,27 @@ def match_with_gaps(my_word, other_word):
         _ , and my_word and other_word are of the same length;
         False otherwise: 
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    
+    check_state = False
+    counter = 0
+    my_word_list = list(my_word)
 
+    # you could just do list(my_word.replace(" ", ""))
+    while " " in my_word_list: my_word_list.remove(" ") 
 
+    str_len = len(my_word_list)
+
+    if str_len == len(other_word):
+      for i in range(0,str_len): 
+        if my_word_list[i] == other_word[i]:
+          counter += 1
+        elif my_word_list[i] == '_':
+          if other_word[i] not in my_word: counter += 1
+
+        if counter == str_len:
+          check_state = True 
+
+    return check_state 
 
 def show_possible_matches(my_word):
     '''
@@ -209,10 +228,14 @@ def show_possible_matches(my_word):
              that has already been revealed.
 
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    possible_matches = []
 
+    for i in range(0,len(wordlist)):
+      if match_with_gaps(my_word,wordlist[i]): possible_matches.append(wordlist[i])
 
+    print(possible_matches)
+
+    return possible_matches
 
 def hangman_with_hints(secret_word):
     '''
@@ -241,8 +264,48 @@ def hangman_with_hints(secret_word):
     
     Follows the other limitations detailed in the problem write-up.
     '''
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    print(f"Welcome to Hangman! The secret word has {len(secret_word)} letters. You have 6 guesses.")
+
+    count_remaining = 6
+    letters_guessed = []
+    alpha_lib = list(string.ascii_lowercase)
+
+    while count_remaining != 0 and not is_word_guessed(secret_word,letters_guessed):
+      availble_letters = get_available_letters(letters_guessed) 
+
+      print(f"\nRound Prep: You have {count_remaining} guesses left.\nHere are the letters that you haven't guessed yet:\n{availble_letters}") 
+      
+      guess = input("You have one guess per round. Go for it! Insert a lower case letter: ")
+
+      current_word = get_guessed_word(secret_word,letters_guessed)
+
+      if guess in alpha_lib: 
+        letters_guessed.append(guess)
+      elif guess == '*': 
+        match_list = show_possible_matches(current_word)
+      else: 
+        guess = input("Invalid. You may only input a lower chase letter in the English alphabet.\nWarning: the program will exit automatically if an invalid input is received again. Please retry: ")
+        if guess in alpha_lib:
+          letters_guessed.append(guess)
+        else: sys.exit()
+
+      
+      if guess in secret_word: 
+        print(f"Nice! The letter {guess} is indeed part of the secret word.")
+      elif guess == '*': print(f"\nThere are {np.size(match_list)} possible matches for the current guessed word.\n")
+      else: 
+        print("Oops, better luck next time!")
+        count_remaining -= 1
+
+      current_word = get_guessed_word(secret_word,letters_guessed)
+      print(current_word)
+
+      if is_word_guessed(secret_word,letters_guessed):
+        print(f"Congrats! You have guessed the secret word: {secret_word}.")
+
+      if count_remaining == 0: print(f"You have exhausted all your chances. See you next time! The word we were looking for: {secret_word}")
+
+    return
 
 
 
@@ -258,13 +321,13 @@ if __name__ == "__main__":
     # To test part 2, comment out the pass line above and
     # uncomment the following two lines.
     
-    secret_word = choose_word(wordlist)
-    hangman(secret_word)
+    # secret_word = choose_word(wordlist)
+    # # hangman(secret_word)
 
 ###############
     
     # To test part 3 re-comment out the above lines and 
     # uncomment the following two lines. 
     
-    #secret_word = choose_word(wordlist)
-    #hangman_with_hints(secret_word)
+    secret_word = choose_word(wordlist)
+    hangman_with_hints(secret_word)
