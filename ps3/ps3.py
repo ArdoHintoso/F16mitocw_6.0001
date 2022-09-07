@@ -8,6 +8,7 @@
 # Time spent    : <total time>
 
 import math
+from os import scandir
 import random
 import string
 
@@ -92,8 +93,14 @@ def get_word_score(word, n):
     returns: int >= 0
     """
 
-    word_array = list(word)
+    upper_case = list(string.ascii_uppercase)
+    lower_case = list(string.ascii_lowercase)
 
+    for i in range(len(upper_case)):
+        SCRABBLE_LETTER_VALUES[upper_case[i]] = SCRABBLE_LETTER_VALUES[lower_case[i]]
+
+    word_array = list(word)
+   
     part_1 = 0
     
     for letter in word_array:
@@ -111,6 +118,8 @@ def get_word_score(word, n):
 
     return p1_score 
 
+# print(get_word_score('it',7))
+
 #
 # Make sure you understand how this function works and what it does!
 #
@@ -127,10 +136,12 @@ def display_hand(hand):
     hand: dictionary (string -> int)
     """
     
-    for letter in hand.keys():
+    for letter in hand.keys(): 
         for j in range(hand[letter]):
              print(letter, end=' ')      # print all on the same line
     print()                              # print an empty line
+
+# display_hand({'a':1, 'x':2, 'l':3, 'e':1})
 
 #
 # Make sure you understand how this function works and what it does!
@@ -146,7 +157,7 @@ def deal_hand(n):
     letters and the values are the number of times the
     particular letter is repeated in that hand.
 
-    n: int >= 0
+    n: int >= 0 
     returns: dictionary (string -> int)
     """
     
@@ -154,8 +165,8 @@ def deal_hand(n):
     num_vowels = int(math.ceil(n / 3))
 
     for i in range(num_vowels):
-        x = random.choice(VOWELS)
-        hand[x] = hand.get(x, 0) + 1
+        x = random.choice(VOWELS) 
+        hand[x] = hand.get(x, 0) + 1 
     
     for i in range(num_vowels, n):    
         x = random.choice(CONSONANTS)
@@ -185,7 +196,32 @@ def update_hand(hand, word):
     returns: dictionary (string -> int)
     """
 
-    pass  # TO DO... Remove this line when you implement this function
+    upper_case = list(string.ascii_uppercase)
+    lower_case = list(string.ascii_lowercase)
+
+    original_word_array = list(word)
+    word_array = []
+
+    for letter in original_word_array:
+        if letter in upper_case: word_array.append(lower_case[upper_case.index(letter)])
+        else: word_array.append(letter)
+
+
+    print(word_array)
+
+    hand_dup = dict(hand) 
+
+    for letter in word_array:
+        if letter in hand.keys() and hand[letter] > 0: 
+            hand_dup[letter] -= 1
+
+    return hand_dup
+
+# hand = {'j':2, 'o':1, 'l':1, 'w':1, 'n':2}
+# display_hand(hand)
+# new_hand = update_hand(hand, 'JOLLY')
+# display_hand(new_hand)
+# display_hand(hand)
 
 #
 # Problem #3: Test word validity
@@ -202,7 +238,21 @@ def is_valid_word(word, hand, word_list):
     returns: boolean
     """
 
-    pass  # TO DO... Remove this line when you implement this function
+    # hand_dup = dict(hand)
+    # word_list_dup = word_list[:]
+    # word_array = list(word)
+
+    is_valid_word = False 
+    cond_2 = False 
+    counter = 0
+
+    for letter in word:
+        if letter in hand: counter += 1
+    if counter == len(word): cond_2 = True
+
+    if word in word_list and cond_2: is_valid_word = True
+
+    return is_valid_word
 
 #
 # Problem #5: Playing a hand
@@ -214,8 +264,8 @@ def calculate_handlen(hand):
     hand: dictionary (string-> int)
     returns: integer
     """
-    
-    pass  # TO DO... Remove this line when you implement this function
+
+    return 
 
 def play_hand(hand, word_list):
 
