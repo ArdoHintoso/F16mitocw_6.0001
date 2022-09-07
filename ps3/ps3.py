@@ -91,8 +91,25 @@ def get_word_score(word, n):
     n: int >= 0
     returns: int >= 0
     """
+
+    word_array = list(word)
+
+    part_1 = 0
     
-    pass  # TO DO... Remove this line when you implement this function
+    for letter in word_array:
+        if letter in SCRABBLE_LETTER_VALUES:
+            part_1 += SCRABBLE_LETTER_VALUES[letter]
+
+    part2_val = 7 * len(word) - 3 * (n-len(word)) 
+
+    if 1 >= part2_val:
+        part_2 = 1
+    else:
+        part_2 = part2_val
+
+    p1_score = part_1 * part_2
+
+    return p1_score 
 
 #
 # Make sure you understand how this function works and what it does!
