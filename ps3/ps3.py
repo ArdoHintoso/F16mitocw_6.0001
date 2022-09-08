@@ -10,6 +10,7 @@
 import math
 from os import scandir
 import random
+from re import I
 import string
 
 VOWELS = 'aeiou'
@@ -181,8 +182,6 @@ def deal_hand(n):
     for i in range(num_vowels, n):    
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
-
-    hand = hand.sort()
     
     return hand
 
@@ -324,39 +323,42 @@ def play_hand(hand, word_list):
       
     """
     
-    # BEGIN PSEUDOCODE <-- Remove this comment when you implement this function
     # Keep track of the total score
-    
+    total_score = 0 
     # As long as there are still letters left in the hand:
-    
+    while calculate_handlen(hand) > 0:
         # Display the hand
-        
+        print("\nHere is your hand: ")
+        display_hand(hand)
         # Ask user for input
-        
+        word = input("\nPlease spell a word from the letters in your hand: ")
         # If the input is two exclamation points:
-        
+        if word == '!!':
             # End the game (break out of the loop)
-
+            break
             
         # Otherwise (the input is not two exclamation points):
-
+        else: 
             # If the word is valid:
-
+            if is_valid_word(word,hand,word_list):
                 # Tell the user how many points the word earned,
                 # and the updated total score
-
+                word_score = get_word_score(word, calculate_handlen(hand))
+                print(f"Word Score: {word_score}")
+                total_score += word_score
+                print(f"Updated Score: {total_score}")
             # Otherwise (the word is not valid):
+            else:
                 # Reject invalid word (print a message)
-                
+                print("Invalid word.") 
             # update the user's hand by removing the letters of their inputted word
-            
+            hand = update_hand(hand,word)
 
     # Game is over (user entered '!!' or ran out of letters),
     # so tell user the total score
-
+    print(f"Game is over! You're total score is: {total_score}")
     # Return the total score as result of function
-
-
+    return total_score
 
 #
 # Problem #6: Playing a game
@@ -436,4 +438,5 @@ def play_game(word_list):
 if __name__ == '__main__':
     word_list = load_words()
     play_game(word_list)
-    print(is_valid_word('h*ney',{'n': 1, 'h': 1, '*': 1, 'y': 1, 'd': 1, 'w': 1, 'e': 2},word_list))
+    play_hand(deal_hand(HAND_SIZE),word_list)
+
