@@ -175,6 +175,20 @@ def deal_hand(n):
     return hand
 
 #
+
+def transform_string(word):
+    upper_case = list(string.ascii_uppercase)
+    lower_case = list(string.ascii_lowercase)
+
+    original_word_array = list(word)
+    word_array = []
+
+    for letter in original_word_array:
+        if letter in upper_case: word_array.append(lower_case[upper_case.index(letter)])
+        else: word_array.append(letter)
+
+    return word_array 
+
 # Problem #2: Update a hand by removing letters
 #
 def update_hand(hand, word):
@@ -196,15 +210,7 @@ def update_hand(hand, word):
     returns: dictionary (string -> int)
     """
 
-    upper_case = list(string.ascii_uppercase)
-    lower_case = list(string.ascii_lowercase)
-
-    original_word_array = list(word)
-    word_array = []
-
-    for letter in original_word_array:
-        if letter in upper_case: word_array.append(lower_case[upper_case.index(letter)])
-        else: word_array.append(letter)
+    word_array = transform_string(word)
 
 
     print(word_array)
@@ -238,19 +244,31 @@ def is_valid_word(word, hand, word_list):
     returns: boolean
     """
 
-    # hand_dup = dict(hand)
+    hand_dup = dict(hand)
     # word_list_dup = word_list[:]
     # word_array = list(word)
 
+    new_word = ''.join(transform_string(word))
+    cond_1 = False
+    cond_2 = False
     is_valid_word = False 
-    cond_2 = False 
     counter = 0
 
-    for letter in word:
-        if letter in hand: counter += 1
-    if counter == len(word): cond_2 = True
+    if new_word.upper() in word_list or new_word in word_list: 
+        cond_1 = True
 
-    if word in word_list and cond_2: is_valid_word = True
+    for letter in new_word:
+        if letter in hand.keys() and hand_dup[letter] >= 1: 
+            counter += 1
+            hand_dup[letter] -= 1
+
+    if counter == len(new_word): cond_2 = True
+
+
+    if cond_1 and cond_2: is_valid_word = True
+
+    print(cond_1)
+    print(cond_2)
 
     return is_valid_word
 
@@ -410,3 +428,4 @@ def play_game(word_list):
 if __name__ == '__main__':
     word_list = load_words()
     play_game(word_list)
+    print(is_valid_word('hello',{'h': 1, 'e': 1, 'l': 2, 'o': 1},word_list))
