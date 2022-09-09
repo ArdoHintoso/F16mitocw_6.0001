@@ -12,6 +12,8 @@ from os import scandir
 import random
 from re import I
 import string
+from tkinter.messagebox import YES
+from typing import final
 
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
@@ -331,7 +333,7 @@ def play_hand(hand, word_list):
         print("\nHere is your hand: ")
         display_hand(hand)
         # Ask user for input
-        word = input("\nPlease spell a word from the letters in your hand: ")
+        word = input("\nPlease spell a word from the letter(s) in your hand or type ! twice to exit program: ")
         # If the input is two exclamation points:
         if word == '!!':
             # End the game (break out of the loop)
@@ -350,13 +352,13 @@ def play_hand(hand, word_list):
             # Otherwise (the word is not valid):
             else:
                 # Reject invalid word (print a message)
-                print("Invalid word.") 
+                print("0 points for invalid word; updating hand...") 
             # update the user's hand by removing the letters of their inputted word
             hand = update_hand(hand,word)
 
     # Game is over (user entered '!!' or ran out of letters),
     # so tell user the total score
-    print(f"Game is over! You're total score is: {total_score}")
+    print(f"Game is over! Your total score is: {total_score}")
     # Return the total score as result of function
     return total_score
 
@@ -392,7 +394,19 @@ def substitute_hand(hand, letter):
     returns: dictionary (string -> int)
     """
     
-    pass  # TO DO... Remove this line when you implement this function
+    hand_copy = dict(hand)
+    hand_keys = list(hand.keys())
+    scrabble_keys = list(SCRABBLE_LETTER_VALUES.keys())
+    final_hand = {}
+    
+    for i in range(len(hand_keys)):
+        if letter == hand_keys[i]:
+            new_letter = random.choice(scrabble_keys)
+            final_hand[new_letter] = hand_copy[letter]
+        else: 
+            final_hand[(hand_keys[i])] = hand_copy[hand_keys[i]]
+
+    return final_hand
        
     
 def play_game(word_list):
@@ -425,8 +439,64 @@ def play_game(word_list):
 
     word_list: list of lowercase strings
     """
-    
-    print("play_game not implemented.") # TO DO... Remove this line when you implement this function
+
+    total_score = 0 
+    round_score = 0
+    replay_counter = 1
+    sub_counter = 1
+
+    num_of_hands = int(input("Enter the number of hands: "))
+
+    size_of_hand = int(input("Enter a number for your desired hand size: "))
+
+    HAND_SIZE = size_of_hand - 1
+
+    hand = deal_hand(HAND_SIZE)
+    hand_copy = dict(hand)
+
+    while num_of_hands > 0:
+        while calculate_handlen(hand) > 0:
+            print("\nCurrent hand: ")
+            display_hand(hand)
+            
+            if sub_counter != 0:
+                sub_yes_no = input("Would you like to substitute a letter? ") 
+                if sub_yes_no == 'yes':
+                    sub_with_what = input("Which letter would you like to replace? ")
+                    hand = substitute_hand(hand,sub_with_what)
+                    sub_counter -= 1
+                    display_hand(hand)
+
+            word = input("\nPlease enter a word or '!!' to indicate you are done: ")
+        
+            if word == '!!':
+                break
+            else: 
+                if is_valid_word(word,hand,word_list):
+                    word_score = get_word_score(word, calculate_handlen(hand))
+                    total_score += word_score
+                    round_score += word_score
+                    print(f"{word} earned {word_score} point. Total: {total_score}")
+                else:
+                    print("0 points for invalid word; updating hand...") 
+                hand = update_hand(hand,word)
+
+        num_of_hands -= 1
+
+        if num_of_hands > 0 and replay_counter != 0: 
+            replay_yes_no = input("Would you like to replay the hand?")
+            if replay_yes_no == 'yes' and replay_counter != 0: 
+                hand = hand_copy
+                total_score -= round_score
+                replay_counter -= 1
+                round_score = 0
+            else: 
+                hand = deal_hand(HAND_SIZE)
+        else: hand = deal_hand(HAND_SIZE)
+
+        
+    print(f"Game is over! Your total score is: {total_score}")
+    return total_score
     
 
 
@@ -438,5 +508,5 @@ def play_game(word_list):
 if __name__ == '__main__':
     word_list = load_words()
     play_game(word_list)
-    play_hand(deal_hand(HAND_SIZE),word_list)
+    # play_hand(deal_hand(HAND_SIZE),word_list)
 
