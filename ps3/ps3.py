@@ -8,12 +8,9 @@
 # Time spent    : <total time>
 
 import math
-from os import scandir
 import random
-from re import I
 import string
-from tkinter.messagebox import YES
-from typing import final
+
 
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
@@ -397,6 +394,12 @@ def substitute_hand(hand, letter):
     hand_copy = dict(hand)
     hand_keys = list(hand.keys())
     scrabble_keys = list(SCRABBLE_LETTER_VALUES.keys())
+    
+    for char in hand_keys:
+        if char in scrabble_keys: scrabble_keys.remove(char)
+
+    print(scrabble_keys)
+    
     final_hand = {}
     
     for i in range(len(hand_keys)):
