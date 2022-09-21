@@ -3,10 +3,7 @@
 # Collaborators:
 # Time Spent: x:xx
 
-from itertools import permutations
-from math import perm
-from random import choice
-import numpy as np
+# from itertools import permutations 
 
 def get_permutations(sequence):
     '''
@@ -132,17 +129,17 @@ def get_permutations(sequence):
     
 
 # sequence = 'abcc'
+# # output = get_permutations(sequence)
+# # print(f'our output: {output}')
+
 # output = get_permutations(sequence)
-# print(f'our output: {output}')
+# print(output,len(output))
 
 # itertools_output = [''.join(p) for p in permutations(sequence)]
 # print(f'itertools output: {itertools_output}')
 
 # print(f'matches: {output == itertools_output}')
 
-perm_lib = get_permutations("abcfgde")
-print(perm_lib,len(perm_lib))
-    
 if __name__ == '__main__':
 #    #EXAMPLE
 #    example_input = 'abc'
