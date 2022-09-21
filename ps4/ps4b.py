@@ -90,7 +90,7 @@ class Message(object):
         
         Returns: a COPY of self.valid_words
         '''
-        return list(self.valid_words)
+        return self.valid_words
 
     def build_shift_dict(self, shift):
         '''
@@ -242,51 +242,68 @@ class CiphertextMessage(Message):
         and the decrypted message text using that shift value
         '''
         
-        decryption_record = []
         decrypted = []
+        max_valid_words = 0 
+        # matched_words = []
 
-        # print(self.message_text)
-
-        # decrypted.append(self.apply_shift(24))
-        
-        # print(decrypted)
-
-        for i in range(27):
+        for i in range(26):
             decrypted.append(self.apply_shift(i))
-            for words in decrypted:
-                print(i, words)
-                # if words.lower() or words.upper() in self.valid_words: 
-                #     decryption_record.append((i,words.lower()))
+            # print(f'\n{i}, {decrypted}\n')
+            
+        for i in range(len(decrypted)):
+            sentence = decrypted[i]
+            best_shift = 0 
+            # print(f"\n decrypted sentence: {sentence}")
+            word_list = sentence.split()
+            # print(f"\n{word_list}\n")
+            for j in range(len(word_list)):
+                if word_list[j].lower() in self.valid_words:
+                    best_shift += 1
+                    # matched_words.append(word_list[j])
+        
+            if best_shift >= max_valid_words:  
+                best_sentence = (i, sentence)  # (decrypted.index(sentence), sentence)
+                max_valid_words = int(best_shift)
+
             # if (decrypted.lower() or decrypted.upper()) in self.valid_words: 
-            #     decryption_record.append((i,decrypted.lower()))
+            #     best_sentence.append((i,decrypted.lower()))
+        
+        # print(best_shift, max_valid_words)
+        # print(matched_words,len(matched_words))
 
-        return decryption_record 
+        plain_txt = PlaintextMessage(best_sentence[1],-best_sentence[0])
+        print(plain_txt.get_message_text_encrypted())
+        print(plain_txt.get_message_text_encrypted() == self.message_text)
 
+        return best_sentence
 
 
 if __name__ == '__main__':
 
 #    #Example test case (PlaintextMessage)
-#    plaintext = PlaintextMessage('hello', 2)
-#    print('Expected Output: jgnnq')
-#    print('Actual Output:', plaintext.get_message_text_encrypted())
+    # plaintext = PlaintextMessage('hello', 2)
+    # print('Expected Output: jgnnq')
+    # print('Actual Output:', plaintext.get_message_text_encrypted())
 #
 #    #Example test case (CiphertextMessage)
-   ciphertext = CiphertextMessage('jgnnq jgnnq')
-   print('Expected Output:', (24, 'hello'))
-   print('Actual Output:', ciphertext.decrypt_message())
+    # ciphertext = CiphertextMessage('jgnnq')
+    # print('Expected Output:', (24, 'hello'))
+    # print('Actual Output:', ciphertext.decrypt_message())
 
     #TODO: WRITE YOUR TEST CASES HERE
-
-    #TODO: best shift value and unencrypted story 
-    
+    # # TEST 1: 
     # original_message = Message(input("Insert a string: "))
-    # # print(original_message.build_shift_dict(26))
+    # print(original_message.build_shift_dict(26))
     # print(original_message.apply_shift(13))
 
-    # plain_txt = PlaintextMessage(input("Insert plain txt: "),14) 
-    # # print(plain_txt.message_text, plain_txt.shift) 
+    # # TEST 2: 
+    # plain_txt = PlaintextMessage(input("Insert plain txt: "),14)
     # print(plain_txt.get_message_text_encrypted())
-    # plain_txt.change_shift(15)
+    # plain_txt.change_shift(1)
     # print(plain_txt.get_message_text_encrypted())
-    # # print(plain_txt.valid_words)
+    # ciphertext = CiphertextMessage(plain_txt.get_message_text_encrypted())
+    # print('Actual Output:', ciphertext.decrypt_message())
+
+    #TODO: best shift value and unencrypted story 
+    ciphertext = CiphertextMessage(get_story_string())
+    print('\nActual Output:', ciphertext.decrypt_message())
