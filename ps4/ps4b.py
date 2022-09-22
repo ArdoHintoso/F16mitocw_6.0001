@@ -90,7 +90,9 @@ class Message(object):
         
         Returns: a COPY of self.valid_words
         '''
-        return self.valid_words
+        valid_words_copy = [*self.valid_words]
+
+        return valid_words_copy
 
     def build_shift_dict(self, shift):
         '''
@@ -132,7 +134,7 @@ class Message(object):
              down the alphabet by the input shift
         '''
         shift_dict = self.build_shift_dict(shift)
-        old_string = (self.message_text)
+        old_string = (self.get_message_text())
         old_string.split()
         new_string = []
 
@@ -183,7 +185,9 @@ class PlaintextMessage(Message):
         
         Returns: a COPY of self.encryption_dict
         '''
-        return dict(self.encryption_dict)
+        encrypted_dict_copy = dict(self.encryption_dict)
+        
+        return encrypted_dict_copy
 
     def get_message_text_encrypted(self):
         '''
